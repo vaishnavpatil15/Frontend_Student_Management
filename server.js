@@ -19,7 +19,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', async (req, res) => {
     try {
         // Make a request to an external API
-        const response = await axios.get('http://localhost:3000/api/departments/');
+        // const response = await axios.get('http://localhost:3000/api/departments/');
+        let response = {data: {
+            data:[]
+        }}
 
         // Pass the data to the EJS template
         res.render('index', { data: response.data.data });
