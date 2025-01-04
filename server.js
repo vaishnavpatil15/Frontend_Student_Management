@@ -18,10 +18,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', async (req, res) => {
     try {
         // Make a request to an external API
-        const response = await axios.get('https://api.example.com/data');
+        const response = await axios.get('http://localhost:3000/api/departments/');
 
         // Pass the data to the EJS template
-        res.render('index', { data: response.data });
+        res.render('index', { data: response.data.data });
     } catch (error) {
         console.error('Error fetching data:', error.message);
         res.status(500).send('An error occurred while fetching data.');
