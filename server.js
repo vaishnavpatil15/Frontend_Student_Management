@@ -20,9 +20,11 @@ app.get('/', async (req, res) => {
     try {
         // Make a request to an external API
         // const response = await axios.get('http://localhost:3000/api/departments/');
-        let response = {data: {
-            data:[]
-        }}
+        let response = {
+            data: {
+                data: []
+            }
+        }
 
         // Pass the data to the EJS template
         res.render('index', { data: response.data.data });
@@ -31,6 +33,11 @@ app.get('/', async (req, res) => {
         res.status(500).send('An error occurred while fetching data.');
     }
 });
+
+app.get('*', function (req, res) {
+    res.render('404', {});
+});
+
 
 // Start the server
 app.listen(PORT, () => {
