@@ -34,6 +34,16 @@ app.get('/', async (req, res) => {
     }
 });
 
+app.get('/login', async (req, res) => {
+        res.render('login', {  });
+    
+});
+
+app.get('/register', async (req, res) => {
+    res.render('register', {  });
+
+});
+
 app.get('*', function (req, res) {
     res.render('404', {});
 });
