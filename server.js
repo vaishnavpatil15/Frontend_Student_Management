@@ -20,7 +20,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Route to render the home page
 app.get('/', async (req, res) => {
     try {
-        res.render('index', { data: {} });
+        let data = {}
+        const response1 = await axios.get('http://localhost:3000/api/departments/');
+        if (response1 && response1.data && response1.data.data.length > 0) {
+            data['totalDepartment'] = response1.data.data.length
+        }
+
+        const response = await axios.get('http://localhost:3000/api/users/all');
+        if (response && response.data && response.data.data.length > 0) {
+            data['totalUsers'] = response.data.data.length
+        }
+
+
+        res.render('index', { data: data });
     } catch (error) {
         console.error('Error fetching data:', error.message);
         res.status(500).send('An error occurred while fetching data.');
@@ -33,26 +45,38 @@ app.get('/login', async (req, res) => {
 });
 
 
+app.get('/tables', async (req, res) => {
+    let responseData
+    const response = await axios.get('http://localhost:3000/api/users/all');
+    if (response && response.data && response.data.data.length > 0) {
+        responseData = response.data.data
+    }
+    res.render('tables', { data: responseData });
+
+});
+
+
 
 app.post('/createuser', async (req, res) => {
-    let requestData =  req.body
-    const response = await axios.post('http://localhost:3000/api/users/create', {  
+    let requestData = req.body
+    const response = await axios.post('http://localhost:3000/api/users/create', {
         "f_name": requestData.FirstName,
         "l_name": requestData.LastName,
         "user_id": requestData.UserId,
         "dept_id": requestData.dept,
-        "password": requestData.Password });
+        "password": requestData.Password
+    });
     let pageData = []
     if (response && response.data && response.data) {
         console.log(response.data.message);
         let createdUserData
-         const userData = await axios.get(`http://localhost:3000/api/users/${requestData.UserId}`);
-         if (userData && userData.data && userData.data.data.length > 0) {
+        const userData = await axios.get(`http://localhost:3000/api/users/${requestData.UserId}`);
+        if (userData && userData.data && userData.data.data.length > 0) {
             createdUserData = userData.data.data[0]
         }
         res.render('index', { data: createdUserData });
     }
-   
+
 });
 
 app.get('/register', async (req, res) => {
