@@ -41,16 +41,31 @@
 
 
                                     </div>
-                                    <div class="form-group">
-                                            <label for="cars">Select a department:</label>
-                                            <select id="dept" name="dept"  placeholder="Email Address" class="form-control form-control-user">
-                                                <option value="volvo">Volvo</option>
-                                                <option value="saab">Saab</option>
-                                                <option value="fiat">Fiat</option>
-                                                <option value="audi">Audi</option>
-                                              </select>
+                                    <div class="small mb-1">Dropdown Button Example:</div>
+                                    <div class="dropdown mb-4">
+                                        <button class="btn btn-primary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                            Dept
+                                        </button>
+                                        <div class="dropdown-menu animated--fade-in"
+                                            aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="#">CS</a>
+                                            <a class="dropdown-item" href="#">MECH</a>
+                                            <a class="dropdown-item" href="#">Something else here</a>
+                                        </div>
                                     </div>
-                                    
+                                    <div class="form-group">
+                                        <label for="dept">Select a department:</label>
+                                        <select id="dept" name="dept" class="form-control form-control-user">
+                                            <% data.forEach((data)=> { %>
+                                                <option value="<%= data.id %>">
+                                                    <%= data.name %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+
 
                                     <a href="/login" class="btn btn-primary btn-user btn-block">
                                         Register Account

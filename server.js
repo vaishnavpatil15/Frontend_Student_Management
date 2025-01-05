@@ -35,12 +35,17 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/login', async (req, res) => {
-        res.render('login', {  });
-    
+    res.render('login', {});
+
 });
 
 app.get('/register', async (req, res) => {
-    res.render('register', {  });
+    const response = await axios.get('http://localhost:3000/api/departments/');
+    let pageData = []
+    if (response && response.data && response.data.data.length > 0) {
+        pageData = response.data.data
+    }
+    res.render('register', { data: pageData });
 
 });
 
