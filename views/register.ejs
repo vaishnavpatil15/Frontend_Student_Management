@@ -14,60 +14,41 @@
                                 <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">Create an student!</h1>
                                 </div>
-                                <form class="user">
+                                <form id="user" action="/createuser" method="post">
                                     <div class="form-group row">
                                         <div class="col-sm-6 mb-3 mb-sm-0">
                                             <input type="text" class="form-control form-control-user"
-                                                id="exampleFirstName" placeholder="First Name">
+                                                id="exampleFirstName" name="FirstName" placeholder="First Name">
                                         </div>
                                         <div class="col-sm-6">
                                             <input type="text" class="form-control form-control-user"
-                                                id="exampleLastName" placeholder="Last Name">
+                                                id="exampleLastName" name="LastName" placeholder="Last Name">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <input type="email" class="form-control form-control-user"
-                                            id="exampleInputEmail" placeholder="Email Address">
+                                        <input type="text" class="form-control form-control-user"
+                                            id="exampleInputEmail" name="UserId" placeholder="User Id for login">
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-6 mb-3 mb-sm-0">
                                             <input type="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password">
+                                                id="exampleInputPassword" name="Password" placeholder="Password">
                                         </div>
                                         <div class="col-sm-6">
-                                            <input type="password" class="form-control form-control-user"
-                                                id="exampleRepeatPassword" placeholder="Repeat Password">
-                                        </div>
-
-
-                                    </div>
-                                    <div class="small mb-1">Dropdown Button Example:</div>
-                                    <div class="dropdown mb-4">
-                                        <button class="btn btn-primary dropdown-toggle" type="button"
-                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                            aria-expanded="false">
-                                            Dept
-                                        </button>
-                                        <div class="dropdown-menu animated--fade-in"
-                                            aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="#">CS</a>
-                                            <a class="dropdown-item" href="#">MECH</a>
-                                            <a class="dropdown-item" href="#">Something else here</a>
+                                            <select id="fruits" name="dept" class="form-control form-control-user" required>
+                                                <option value="" disabled selected>Select the department</option>
+                                                <% data.forEach((data)=> { %>
+                                                    <option value="<%= data.id %>">
+                                                        <%= data.name %>
+                                                    </option>
+                                                    <% }) %>
+                                            </select>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="dept">Select a department:</label>
-                                        <select id="dept" name="dept" class="form-control form-control-user">
-                                            <% data.forEach((data)=> { %>
-                                                <option value="<%= data.id %>">
-                                                    <%= data.name %>
-                                                </option>
-                                                <% }) %>
-                                        </select>
-                                    </div>
+                                
 
 
-                                    <a href="/login" class="btn btn-primary btn-user btn-block">
+                                    <a href="#" onclick="submitForm(event)" class="btn btn-primary btn-user btn-block">
                                         Register Account
                                     </a>
                                     <hr>
@@ -98,6 +79,26 @@
         <!-- Custom scripts for all pages-->
         <script src="js/sb-admin-2.min.js"></script>
 
+
+
+
+        <script>
+            function submitForm(event) {
+                event.preventDefault(); // Prevent default behavior of <a>
+                const form = document.getElementById('user');
+
+                if (form) {
+                    const formData = new FormData(form);
+
+                    for (const [key, value] of formData.entries()) {
+                        console.log(`${key}: ${value}`);
+                    }
+                    form.submit();
+                } else {
+                    console.error('Form not found!');
+                }
+            }
+        </script>
 
     </body>
 
