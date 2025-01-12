@@ -6,9 +6,11 @@ const session = require('express-session')
 const passport = require('passport');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = 8000;
+
 
 // Set EJS as the template engine
 app.set('view engine', 'ejs');
@@ -30,6 +32,20 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+async function createJWTTokenUsingReq(userObject) {
+    try {
+        let user = {
+            id: userObject.id,
+            email: userObject.email
+        }
+        const token = jwt.sign(user, process.env.JWT_AUTH_KEY, { expiresIn: '1h' }); 
+        console.log('Generated JWT Token:', token);
+        return token
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 passport.use(
     new GoogleStrategy(
@@ -104,11 +120,11 @@ function isAuthenticated(req, res, next) {
 
 async function getUserData(req) {
     try {
-        const userDataResponse  = await axios.get(`${process.env.BACK_END_API_URL}/api/users/${req.user.user_id}`);
+        const userDataResponse = await axios.get(`${process.env.BACK_END_API_URL}/api/users/${req.user.user_id}`);
         if (userDataResponse && userDataResponse.data && userDataResponse.data.data.length > 0) {
-          return userDataResponse.data.data[0]
+            return userDataResponse.data.data[0]
         }
-        
+
     } catch (error) {
         console.error('Error fetching data:', error.message);
         res.status(500).send('An error occurred while fetching data.');
@@ -153,8 +169,8 @@ app.get('/login', async (req, res) => {
 });
 
 
-app.get('/tables', isAuthenticated,async (req, res) => {
-    
+app.get('/tables', isAuthenticated, async (req, res) => {
+
     let responseData = {}
     responseData['userData'] = await getUserData(req)
     const response = await axios.get(`${process.env.BACK_END_API_URL}/api/users/all`);
@@ -167,7 +183,7 @@ app.get('/tables', isAuthenticated,async (req, res) => {
 
 
 
-app.post('/createuser', isAuthenticated,async (req, res) => {
+app.post('/createuser', isAuthenticated, async (req, res) => {
     try {
         let requestData = req.body
         const response = await axios.post(`${process.env.BACK_END_API_URL}/api/users/create`, {
@@ -194,7 +210,7 @@ app.post('/createuser', isAuthenticated,async (req, res) => {
 
 });
 
-app.get('/register',isAuthenticated, async (req, res) => {
+app.get('/register', isAuthenticated, async (req, res) => {
     const response = await axios.get(`${process.env.BACK_END_API_URL}/api/departments/`);
     let pageData = []
     if (response && response.data && response.data.data.length > 0) {
@@ -206,14 +222,14 @@ app.get('/register',isAuthenticated, async (req, res) => {
 
 app.get('/logout', (req, res) => {
     req.logout((err) => {
-      if (err) {
-        console.error(err);
-      }
-      res.redirect('/');
+        if (err) {
+            console.error(err);
+        }
+        res.redirect('/');
     });
-  });
+});
 
-app.get('*',async function (req, res) {
+app.get('*', async function (req, res) {
     let responseData = {}
     responseData['userData'] = await getUserData(req)
     res.render('404', { data: responseData });
