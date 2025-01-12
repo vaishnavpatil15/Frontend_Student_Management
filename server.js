@@ -2,7 +2,6 @@ const express = require('express');
 const axios = require('axios');
 const path = require('path');
 let bodyParser = require('body-parser')
-const bcrypt = require('bcrypt')
 const session = require('express-session')
 const passport = require('passport');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
