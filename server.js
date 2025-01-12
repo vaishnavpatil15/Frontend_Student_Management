@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
     session({
-        secret: '4e5508fd-979d-47ad-a56b-e9a604d02f1f',
+        secret: process.env.EXPRESS_SESSION_KEY,
         resave: false,
         saveUninitialized: true,
     })
@@ -37,7 +37,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: '/auth/google/callback',
+            callbackURL: process.env.GOOGLE_CALLBACK_URL,
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
