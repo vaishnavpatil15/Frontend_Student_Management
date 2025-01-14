@@ -39,7 +39,7 @@ async function createJWTTokenUsingReq(reqObject) {
             id: reqObject.user.id,
             email: reqObject.user.email
         }
-        const token = jwt.sign(user, process.env.JWT_AUTH_KEY, { expiresIn: '1h' }); 
+        const token = jwt.sign(user, process.env.JWT_AUTH_KEY, { expiresIn: '1h' });
         // console.log('Generated JWT Token:', token);
         return token
     } catch (error) {
@@ -118,7 +118,7 @@ function isAuthenticated(req, res, next) {
     res.redirect('/login');
 }
 
-async function getUserData(req) {
+async function getUserData(req, res) {
     try {
         const userDataResponse = await axios.get(`${process.env.BACK_END_API_URL}/api/users/${req.user.user_id}`);
         if (userDataResponse && userDataResponse.data && userDataResponse.data.data.length > 0) {
@@ -126,8 +126,12 @@ async function getUserData(req) {
         }
 
     } catch (error) {
-        console.error('Error fetching data:', error.message);
-        res.status(500).send('An error occurred while fetching data.');
+       return {
+            "email": "",
+            "user_profile": ''
+        }
+        // console.error('Error fetching data:', error.message);
+        // res.status(500).send('An error occurred while fetching data.');
     }
 }
 
@@ -141,9 +145,9 @@ app.get('/', isAuthenticated, async (req, res) => {
             data['totalDepartment'] = response1.data.data.length
         }
 
-        const response = await axios.get(`${process.env.BACK_END_API_URL}/api/users/all`,{
+        const response = await axios.get(`${process.env.BACK_END_API_URL}/api/users/all`, {
             headers: { Authorization: `Bearer ${await createJWTTokenUsingReq(req)}` },
-          });
+        });
         if (response && response.data && response.data.data.length > 0) {
             data['totalUsers'] = response.data.data.length
         }
@@ -174,9 +178,9 @@ app.get('/login', async (req, res) => {
 app.get('/tables', isAuthenticated, async (req, res) => {
     let responseData = {}
     responseData['userData'] = await getUserData(req)
-    const response = await axios.get(`${process.env.BACK_END_API_URL}/api/users/all` ,{
+    const response = await axios.get(`${process.env.BACK_END_API_URL}/api/users/all`, {
         headers: { Authorization: `Bearer ${await createJWTTokenUsingReq(req)}` },
-      });
+    });
 
     if (response && response.data && response.data.data.length > 0) {
         responseData['tableData'] = response.data.data
@@ -235,7 +239,7 @@ app.get('/logout', (req, res) => {
 
 app.get('*', async function (req, res) {
     let responseData = {}
-    responseData['userData'] = await getUserData(req)
+    responseData['userData'] = await getUserData(req, res)
     res.render('404', { data: responseData });
 });
 
@@ -243,4 +247,20 @@ app.get('*', async function (req, res) {
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+process.on("SIGTERM", () => {
+    console.log("SIGTERM received. Shutting down gracefully...");
+    server.close(() => {
+        console.log("Server closed.");
+        process.exit(0);
+    });
+});
+
+process.on("SIGINT", () => {
+    console.log("SIGINT received. Shutting down gracefully...");
+    server.close(() => {
+        console.log("Server closed.");
+        process.exit(0);
+    });
 });
