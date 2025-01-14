@@ -33,14 +33,14 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-async function createJWTTokenUsingReq(userObject) {
+async function createJWTTokenUsingReq(reqObject) {
     try {
         let user = {
-            id: userObject.id,
-            email: userObject.email
+            id: reqObject.user.id,
+            email: reqObject.user.email
         }
         const token = jwt.sign(user, process.env.JWT_AUTH_KEY, { expiresIn: '1h' }); 
-        console.log('Generated JWT Token:', token);
+        // console.log('Generated JWT Token:', token);
         return token
     } catch (error) {
         console.log(error);
@@ -141,7 +141,9 @@ app.get('/', isAuthenticated, async (req, res) => {
             data['totalDepartment'] = response1.data.data.length
         }
 
-        const response = await axios.get(`${process.env.BACK_END_API_URL}/api/users/all`);
+        const response = await axios.get(`${process.env.BACK_END_API_URL}/api/users/all`,{
+            headers: { Authorization: `Bearer ${await createJWTTokenUsingReq(req)}` },
+          });
         if (response && response.data && response.data.data.length > 0) {
             data['totalUsers'] = response.data.data.length
         }
@@ -170,10 +172,12 @@ app.get('/login', async (req, res) => {
 
 
 app.get('/tables', isAuthenticated, async (req, res) => {
-
     let responseData = {}
     responseData['userData'] = await getUserData(req)
-    const response = await axios.get(`${process.env.BACK_END_API_URL}/api/users/all`);
+    const response = await axios.get(`${process.env.BACK_END_API_URL}/api/users/all` ,{
+        headers: { Authorization: `Bearer ${await createJWTTokenUsingReq(req)}` },
+      });
+
     if (response && response.data && response.data.data.length > 0) {
         responseData['tableData'] = response.data.data
     }
