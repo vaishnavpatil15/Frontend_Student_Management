@@ -9,7 +9,7 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.LOCAL_HOST_PORT;
 
 
 // Set EJS as the template engine
